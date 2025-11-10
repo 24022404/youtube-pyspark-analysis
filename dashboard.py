@@ -81,6 +81,7 @@ if main_topic == "Phân tích Thể loại":
     **Nhận xét:**  
     hhhhhhhhh
     """)
+    
     st.divider()
     st.subheader("5. Video Hàng đầu theo Từng Thể loại")
     st.image("images/category_analysis/05_01.png",use_container_width=True)
@@ -93,10 +94,49 @@ if main_topic == "Phân tích Thể loại":
 # ---------------------------------------------------------
 # 🕒 PHÂN TÍCH 2: THỜI GIAN
 # ---------------------------------------------------------
-elif main_topic == "Phân tích Thời gian ":
+elif main_topic == "Phân tích Thời gian":
     st.header("🕒 Phân tích Theo Thời gian (Time)")
     st.write("Khám phá xu hướng xuất bản video trending theo Tháng, Ngày, và Giờ trong ngày.")
+    
+    st.subheader("1. ")
+    st.image("images/time_analysis/01.png", use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhh
+    """)
 
+    st.divider()
+    st.subheader("2. ")
+    st.image("images/time_analysis/02.png", use_container_width=True)
+    st.markdown("""
+    hhhhh
+    """)
+
+    st.divider()
+    st.subheader("3. ")
+    st.image("images/time_analysis/03.png",use_container_width=True)
+    st.markdown("""
+    hhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("4. ")
+    st.image("images/time_analysis/04.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("5. ")
+    st.image("images/time_analysis/05.png",use_container_width=True)
+    st.image("images/time_analysis/05_01.png",use_container_width=True)
+    st.image("images/time_analysis/05_02.png",use_container_width=True)
+    st.image("images/time_analysis/05_03.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
 
 # ---------------------------------------------------------
 # 💬 PHÂN TÍCH 3: TƯƠNG TÁC
@@ -104,14 +144,101 @@ elif main_topic == "Phân tích Thời gian ":
 elif main_topic == "Phân tích Tương tác":
     st.header("💬 Phân tích Tương tác (Interaction)")
     st.write("Khám phá mối tương quan giữa View, Like, Dislike và Comment.")
+    
+    st.subheader("1. ")
+    st.image("images/interaction_analysis/01.png", use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhh
+    """)
+
+    st.divider()
+    st.subheader("2. ")
+    st.image("images/interaction_analysis/02.png", use_container_width=True)
+    st.markdown("""
+    hhhhh
+    """)
+
+    st.divider()
+    st.subheader("3. ")
+    st.image("images/interaction_analysis/03.png",use_container_width=True)
+    st.markdown("""
+    hhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("4. ")
+    st.image("images/interaction_analysis/04.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("5. ")
+    st.image("images/interaction_analysis/05.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("6. ")
+    st.image("images/interaction_analysis/06.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
+    
+    st.divider()
+    st.subheader("7. ")
+    st.image("images/interaction_analysis/07.png",use_container_width=True)
+    st.image("images/interaction_analysis/07_01.png",use_container_width=True)
+    st.image("images/interaction_analysis/07_02.png",use_container_width=True)
+    st.markdown("""
+    **Nhận xét:**  
+    hhhhhhhhh
+    """)
 
 # ---------------------------------------------------------
 # ⚡ PHÂN TÍCH 4: REALTIME
 # ---------------------------------------------------------
 elif main_topic == "Giám sát Thời gian thực":
-    st.header("⚡ Giám sát Thời gian thực (Real-time Dashboard)")
-    st.write("Trang này hiển thị dữ liệu cập nhật trực tiếp từ Spark Streaming & Kafka (nếu đã triển khai).")
+    st.header("Giám sát Thời gian thực (Real-time)")
+    st.write("Nhấn nút bên dưới để chạy giám sát trong 10 phút (cập nhật mỗi 5 phút).")
+    st.divider()
 
-    st.warning("🚧 Chức năng đang phát triển...")
-    st.info("💡 Gợi ý: Dùng `st.empty()` để hiển thị dữ liệu liên tục từ Kafka stream.")
-
+    if st.button("BẮT ĐẦU GIÁM SÁT"):
+        
+        with st.spinner("Đang chạy giám sát... (Việc này sẽ mất 10 phút)..."):
+            try:
+                # 1. GỌI HÀM LẤY DỮ LIỆU
+                # (Hàm này sẽ chạy trong 10 phút và trả về 1 DataFrame)
+                history_df = realtime_logic.continuous_monitoring(
+                    duration_minutes=10, 
+                    interval_seconds=300
+                )
+                
+                # 2. GỌI HÀM VẼ (Dùng data vừa lấy)
+                fig_summary = realtime_logic.plot_results(history_df) 
+                
+                # 3. HIỂN THỊ KẾT QUẢ
+                
+                if fig_summary is not None:
+                    st.subheader("Bảng điều khiển Tóm tắt (Sau 10 phút)")
+                    # Dùng st.pyplot để hiển thị 'fig'
+                    st.pyplot(fig_summary, use_container_width=True) 
+                    
+                    st.subheader("Dữ liệu Lịch sử Chi tiết")
+                    # Dùng st.dataframe để hiển thị bảng
+                    st.dataframe(history_df, use_container_width=True) 
+                    
+                    st.success("Giám sát hoàn tất!")
+                else:
+                    st.warning("⚠️ Không có dữ liệu lịch sử để hiển thị.")
+                    
+            except Exception as e:
+                st.error(f"Đã xảy ra lỗi khi chạy: {e}")
+    
+    else:
+        st.info("Nhấn nút để bắt đầu.")

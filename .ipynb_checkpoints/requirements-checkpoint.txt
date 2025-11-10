@@ -1,10 +1,5 @@
-# Bắt buộc phải 3.2.1 để khớp với HDFS
 pyspark==3.2.1
-
-# Cho Notebook
 jupyterlab
-
-# Cho Dashboard (UI)
 streamlit
 
 # Cho Phân tích & Vẽ
@@ -12,3 +7,4 @@ pandas
 matplotlib
 seaborn
 setuptools
+google-api-python-client
