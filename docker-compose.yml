@@ -1,61 +1,16 @@
-# # version: '3.8'
-
-# services:
-#   namenode:
-#     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-#     container_name: namenode
-#     restart: always
-#     ports:
-#       - "9870:9870"  # Web UI
-#       - "9000:9000"  # HDFS (cho PySpark)
-#     volumes:
-#       - namenode_data:/hadoop/dfs/name
-#       # Ánh xạ thư mục data của bạn vào container
-#       - ./youtube-pyspark-analysis/data:/data_input 
-#     environment:
-#       - CLUSTER_NAME=test
-#       # Chỉ định cổng HDFS là 9000
-#       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-#       # Quan trọng: Đặt là 1 vì chỉ có 1 datanode
-#       - HDFS_CONF_dfs_replication=1 
-#     networks:
-#       - hadoop_network
-
-#   datanode:
-#     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-#     container_name: datanode
-#     restart: always
-#     depends_on:
-#       - namenode
-#     volumes:
-#       - datanode_data:/hadoop/dfs/data
-#     environment:
-#       # Báo cho datanode biết cổng của namenode
-#       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-#       # Dòng quan trọng: Bắt datanode đợi namenode
-#       - SERVICE_PRECONDITION=namenode:9870 
-#     networks:
-#       - hadoop_network
-
-# volumes:
-#   namenode_data:
-#   datanode_data:
-
-# networks:
-#   hadoop_network:
+version: '3.8'
 
 services:
+  # --- 1. & 2. DỊCH VỤ HDFS ---
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
     restart: always
     ports:
       - "9870:9870"  # Web UI
-      - "9000:9000"  # HDFS (cho PySpark)
     volumes:
       - namenode_data:/hadoop/dfs/name
-      # Ánh xạ thư mục data để HDFS có thể "thấy" dữ liệu thô
-      # ĐÃ SỬA: Đường dẫn ./data (so với vị trí file docker-compose.yml)
+      # Ánh xạ thư mục data của bạn (đúng theo ảnh)
       - ./data:/data_input 
     environment:
       - CLUSTER_NAME=test
@@ -78,30 +33,46 @@ services:
     networks:
       - hadoop_network
 
-  spark-jupyter-lab:
-    image: jupyter/pyspark-notebook:latest
-    container_name: spark-jupyter-lab
+  # --- 3. DỊCH VỤ JUPYTER (Để code) ---
+  jupyter-lab:
+    # Dùng 'build: .' (sẽ tìm Dockerfile ở thư mục này)
+    build: .
+    container_name: jupyter-lab
     restart: always
     depends_on:
-      - namenode
-      - datanode
+      - datanode # Chờ HDFS sẵn sàng
     ports:
       - "8888:8888"  # Jupyter Lab UI
       - "4040:4040"  # Spark UI
     volumes:
-      # Ánh xạ toàn bộ thư mục dự án vào container
-      # ĐÃ SỬA: Dùng "." để ánh xạ thư mục hiện tại (chính là youtube-pyspark-analysis)
+      # Ánh xạ toàn bộ thư mục hiện tại vào /home/jovyan/work
       - .:/home/jovyan/work
     environment:
       - JUPYTER_ENABLE_LAB=yes
-      # Cấp quyền để có thể cài đặt thư viện
-      - GRANT_SUDO=yes
+      - JUPYTER_TOKEN='' # Tắt mật khẩu
     networks:
       - hadoop_network
-    # Cài đặt các thư viện Python còn thiếu
-    command: >
-      bash -c "pip install kagglehub google-api-python-client findspark seaborn &&
-      start-notebook.sh --NotebookApp.token=''"
+    command: start-notebook.sh --NotebookApp.token=''
+
+  # --- 4. DỊCH VỤ DASHBOARD (UI) ---
+  dashboard-ui:
+    # Dùng chung image đã 'build' ở trên
+    build: .
+    container_name: dashboard-ui
+    restart: always
+    depends_on:
+      - datanode # Chờ HDFS sẵn sàng
+    ports:
+      - "8501:8501"  # Streamlit UI
+    volumes:
+      # SỬA LỖI Ở ĐÂY: Ánh xạ vào CÙNG thư mục /home/jovyan/work
+      - .:/home/jovyan/work
+    # SỬA LỖI Ở ĐÂY: Đặt thư mục làm việc là /home/jovyan/work
+    working_dir: /home/jovyan/work 
+    networks:
+      - hadoop_network
+    # Lệnh để chạy Streamlit (nó sẽ tìm 'dashboard.py' trong /home/jovyan/work)
+    command: streamlit run dashboard.py
 
 volumes:
   namenode_data:
