@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+import realtime_logic
 
 # =========================================================
 # ⚙️ CẤU HÌNH TRANG CHÍNH
@@ -215,8 +216,8 @@ elif main_topic == "Giám sát Thời gian thực":
                 # 1. GỌI HÀM LẤY DỮ LIỆU
                 # (Hàm này sẽ chạy trong 10 phút và trả về 1 DataFrame)
                 history_df = realtime_logic.continuous_monitoring(
-                    duration_minutes=10, 
-                    interval_seconds=300
+                    duration_minutes=2, 
+                    interval_seconds=30
                 )
                 
                 # 2. GỌI HÀM VẼ (Dùng data vừa lấy)
