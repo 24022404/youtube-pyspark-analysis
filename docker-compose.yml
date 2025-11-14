@@ -42,8 +42,8 @@ services:
     depends_on:
       - datanode # Chờ HDFS sẵn sàng
     ports:
-      - "8888:8888"  # Jupyter Lab UI
-      - "4040:4040"  # Spark UI
+      - "8889:8888"  # Jupyter Lab UI
+      - "4041:4040"  # Spark UI
     volumes:
       # Ánh xạ toàn bộ thư mục hiện tại vào /home/jovyan/work
       - .:/home/jovyan/work
