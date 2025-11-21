@@ -3,6 +3,7 @@
 Flask API Server - Cầu nối giữa MongoDB và Dashboard
 """
 
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -14,9 +15,10 @@ CORS(app)  # Cho phép dashboard truy cập
 # Kết nối MongoDB
 mongo_client = None
 db = None
-
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 try:
-    mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
+    # mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
+    mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
     mongo_client.server_info()
     db = mongo_client['youtube_analytics']
     print("✅ Connected to MongoDB")
@@ -98,4 +100,4 @@ if __name__ == '__main__':
     print("   • /api/health - Health check")
     print("=" * 60)
     
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
