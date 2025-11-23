@@ -889,7 +889,9 @@
             for (let item of data) {
                 const ts = item.processing_timestamp || item.timestamp || item.kafka_timestamp;
                 if (ts) {
-                    const date = new Date(ts);
+                    // const date = new Date(ts);
+                    const timeString = ts.endsWith('Z') ? ts : ts + 'Z';
+                    const date = new Date(timeString);
                     if (!latestTimestamp || date > latestTimestamp) {
                         latestTimestamp = date;
                     }
@@ -898,7 +900,8 @@
             
             if (!latestTimestamp) return { isStale: true, ageSeconds: 0 };
             
-            const now = new Date();
+            // const now = new Date();
+            const now = new Date(new Date().toISOString());
             const ageSeconds = (now - latestTimestamp) / 1000;
             
             return {

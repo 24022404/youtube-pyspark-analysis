@@ -15,9 +15,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Setup Java
-os.environ['JAVA_HOME'] = 'C:\\Java\\jdk-1.8'
-os.environ['HADOOP_HOME'] = os.environ.get('JAVA_HOME')
-os.environ['PATH'] = f"{os.environ['JAVA_HOME']}\\bin;{os.environ.get('PATH', '')}"
+# os.environ['JAVA_HOME'] = 'C:\\Java\\jdk-1.8'
+# os.environ['HADOOP_HOME'] = os.environ.get('JAVA_HOME')
+# os.environ['PATH'] = f"{os.environ['JAVA_HOME']}\\bin;{os.environ.get('PATH', '')}"
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 
 import findspark
 findspark.init()
@@ -39,12 +41,19 @@ print("=" * 70)
 # =====================================================================
 print("\n[1/4] Initializing Spark Session...")
 
+# spark = SparkSession.builder \
+#     .appName("YouTubeRealTimeAnalysis") \
+#     .master("local[*]") \
+#     .config("spark.driver.memory", "2g") \
+#     .config("spark.sql.warehouse.dir", tempfile.gettempdir()) \
+#     .config("spark.ui.enabled", "false") \
+#     .getOrCreate()
+
 spark = SparkSession.builder \
     .appName("YouTubeRealTimeAnalysis") \
     .master("local[*]") \
     .config("spark.driver.memory", "2g") \
-    .config("spark.sql.warehouse.dir", tempfile.gettempdir()) \
-    .config("spark.ui.enabled", "false") \
+    .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0") \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel("ERROR")
@@ -262,7 +271,8 @@ print("✅ Model ready for predictions")
 print("\n[3/4] Connecting to MongoDB...")
 
 try:
-    mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
+    # mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
+    mongo_client = MongoClient(MONGO_URI)
     mongo_client.server_info()
     
     db = mongo_client['youtube_analytics']
@@ -282,7 +292,8 @@ print("\n[4/4] Connecting to Kafka...")
 
 consumer = KafkaConsumer(
     'youtube-trending',
-    bootstrap_servers='localhost:9092',
+    # bootstrap_servers='localhost:9092',
+    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
     value_deserializer=lambda m: json.loads(m.decode('utf-8')),
     auto_offset_reset='latest',
     enable_auto_commit=True,

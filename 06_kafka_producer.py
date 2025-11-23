@@ -2,7 +2,7 @@
 06_kafka_producer.py
 Kafka Producer - CRAWL REAL-TIME từ YouTube API
 """
-
+import os
 from kafka import KafkaProducer
 from googleapiclient.discovery import build
 import json
@@ -17,9 +17,12 @@ logger = logging.getLogger(__name__)
 API_KEY = 'AIzaSyBHZ-BVjZUVWMxhJfJ3k85PdQh12Hyf70k'
 
 class YouTubeKafkaProducer:
-    def __init__(self, bootstrap_servers='localhost:9092', topic='youtube-trending'):
-        self.topic = topic
+    def __init__(self, bootstrap_servers= None, topic='youtube-trending'):
         
+        if bootstrap_servers is None:
+            bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+
+        self.topic = topic
         # Kafka Producer
         try:
             self.producer = KafkaProducer(
@@ -154,12 +157,12 @@ def main():
     print("=" * 70)
     
     producer = YouTubeKafkaProducer(
-        bootstrap_servers='localhost:9092',
+        # bootstrap_servers='localhost:9092',
         topic='youtube-trending'
     )
     
     # Stream real-time với crawl mỗi 10 phút
-    producer.stream_realtime(interval=600, batch_size=10)
+    producer.stream_realtime(interval=60, batch_size=10)
 
 
 if __name__ == "__main__":
