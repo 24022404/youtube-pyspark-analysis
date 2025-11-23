@@ -23,20 +23,17 @@
 ## 🏗️ Kiến trúc hệ thống
 
 ```
-📥 DATA COLLECTION
+DATA COLLECTION
    │
    ├─▶ Kaggle (2020-2024) ─┐
-   │                        ├─▶ raw_data.csv
-   └─▶ YouTube Crawl ───────┘        │
-                                     │
-                                     ├─▶ 🧹 Preprocessing ──▶ 📊 Batch Analysis ──▶ 📈 Insights
-                                     │
-                                     └─▶ 🤖 Train ML Model ──────────────────┐
-                                                                             │
-⚡ REAL-TIME PIPELINE                                                        │
-                                                                             ▼
-[Crawl] ──▶ [Kafka] ──▶ [PySpark] ──▶ [Predict] ──▶ [MongoDB] ──▶ 🌐 Dashboard
- YouTube      Topic      + Model        Views/Likes
+   │                        ├─▶ raw_data.csv ──▶ Preprocessing ──┬─▶ Batch Analysis ──▶ Insight
+   └─▶ YouTube Crawl ──────┘                                     │
+                                                                  └─▶ Train ML Model ───┐
+                                                                                         │
+REAL-TIME PIPELINE                                                                       │
+                                                                                         ▼
+[Crawl] ─────────────────▶ [Kafka] ─────────────────▶ [PySpark] ─────────────────▶ [Predict] ──▶ [MongoDB] ──▶ Dashboard
+YouTube                      Topic                      Streaming                     + Model       Storage
 ```
 
 ---
