@@ -9,7 +9,6 @@
 | 23020370 | Đồng Mạnh Hùng    |
 | 24022404 | Nguyễn Đức Minh   |
  
-📝 [Báo cáo Latex](https://www.overleaf.com/3531892396cjspnhknhykc#a6aceb)
 
 ---
 
